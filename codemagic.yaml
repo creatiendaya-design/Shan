@@ -1,0 +1,30 @@
+workflows:
+  ios-unsigned:
+    name: Shannon iOS (sin firma)
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Instalar dependencias
+        script: flutter pub get
+      - name: Construir iOS sin firma
+        script: |
+          flutter build ios --release --no-codesign
+          cd ios
+          xcodebuild -workspace Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -archivePath "$CM_BUILD_DIR/Shannon.xcarchive" \
+            archive \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+          xcodebuild -exportArchive \
+            -archivePath "$CM_BUILD_DIR/Shannon.xcarchive" \
+            -exportPath "$CM_BUILD_DIR/ipa" \
+            -exportOptionsPlist "../ExportOptions.plist"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - $CM_BUILD_DIR/ipa/*.ipa
