@@ -6,7 +6,7 @@ workflows:
       app_store_connect: creatiendaya@gmail.com
     environment:
       flutter: stable
-      xcode: 16.3
+      xcode: latest
       cocoapods: default
       groups:
         - default
