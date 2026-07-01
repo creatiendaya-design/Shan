@@ -1,22 +1,26 @@
 workflows:
-  ios-unsigned:
-    name: Shannon iOS (sin firma)
+  ios-testflight:
+    name: Shannon iOS → TestFlight
     max_build_duration: 60
+    integrations:
+      app_store_connect: creatiendaya@gmail.com
     environment:
       flutter: stable
       xcode: 16.3
       cocoapods: default
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.creatiendaya.shannon
     scripts:
       - name: Instalar dependencias
         script: |
           flutter pub get
           cd ios && pod install && cd ..
-      - name: Construir iOS sin firma
-        script: |
-          flutter build ios --release --no-codesign
-          mkdir -p build/ios/iphoneos/Payload
-          cp -r build/ios/iphoneos/Runner.app build/ios/iphoneos/Payload/
-          cd build/ios/iphoneos
-          zip -r Shannon.ipa Payload/
+      - name: Construir y firmar
+        script: flutter build ipa --release
     artifacts:
-      - build/ios/iphoneos/Shannon.ipa
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        api_key: creatiendaya@gmail.com
+        submit_to_testflight: true
