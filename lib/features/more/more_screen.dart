@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../app/theme/app_colors.dart';
 import '../about/about_screen.dart';
@@ -91,7 +92,7 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
             ),
           ]),
           const SizedBox(height: 20),
-          _buildSection(context, 'Configuración', [
+          _buildSection(context, 'Ajustes', [
             _MoreItem(
               icon: Icons.category_outlined,
               label: 'Categorías',
@@ -148,6 +149,9 @@ class _MoreScreenState extends ConsumerState<MoreScreen> {
               ),
             ),
           ]),
+          const SizedBox(height: 36),
+          const _SealedEnvelope(),
+          const SizedBox(height: 32),
         ],
       ),
     );
@@ -205,4 +209,214 @@ class _MoreItem {
   final VoidCallback? onTap;
   final Widget? trailing;
   const _MoreItem({required this.icon, required this.label, this.onTap, this.trailing});
+}
+
+// ── Sobre sellado ────────────────────────────────────────────────────────────
+
+class _SealedEnvelope extends StatefulWidget {
+  const _SealedEnvelope();
+
+  @override
+  State<_SealedEnvelope> createState() => _SealedEnvelopeState();
+}
+
+class _SealedEnvelopeState extends State<_SealedEnvelope>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulse;
+  late final Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulse = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1800),
+    )..repeat(reverse: true);
+    _scale = Tween<double>(begin: 1.0, end: 1.03).animate(
+      CurvedAnimation(parent: _pulse, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pulse.dispose();
+    super.dispose();
+  }
+
+  void _openLetter() {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 450),
+      transitionBuilder: (ctx, anim, _, child) => ScaleTransition(
+        scale: CurvedAnimation(parent: anim, curve: Curves.easeOutBack),
+        child: FadeTransition(opacity: anim, child: child),
+      ),
+      pageBuilder: (ctx, _, __) => const _LetterDialog(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScaleTransition(
+      scale: _scale,
+      child: GestureDetector(
+        onTap: _openLetter,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 20),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFFFFF0F5), Color(0xFFFFE0EB)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: const Color(0xFFFFB3CC), width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFFF85A1).withValues(alpha: 0.25),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('✉️', style: TextStyle(fontSize: 30)),
+              const SizedBox(width: 14),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Para ti',
+                    style: GoogleFonts.dancingScript(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFFB02050),
+                    ),
+                  ),
+                  Text(
+                    'Toca para abrir  💌',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: const Color(0xFFB02050).withValues(alpha: 0.55),
+                      letterSpacing: 0.4,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LetterDialog extends StatelessWidget {
+  const _LetterDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 26),
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(28, 32, 28, 28),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFFBF2),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: const Color(0xFFFFD6A5), width: 1.5),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.18),
+                  blurRadius: 32,
+                  offset: const Offset(0, 12),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('💌', style: TextStyle(fontSize: 44)),
+                const SizedBox(height: 14),
+                Text(
+                  'Hola, Shannon',
+                  style: GoogleFonts.dancingScript(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF8B3A20),
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Container(height: 1, color: const Color(0xFFFFD6A5)),
+                const SizedBox(height: 20),
+                Text(
+                  'Sé que apenas nos estamos conociendo,\ny precisamente por eso hice esto para ti.\n\nMe gustaría tenerte más cerca...\n¿Me darías el gusto de invitarte a salir?',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.lato(
+                    fontSize: 15.5,
+                    height: 1.85,
+                    color: const Color(0xFF5C3317),
+                  ),
+                ),
+                const SizedBox(height: 26),
+                Container(height: 1, color: const Color(0xFFFFD6A5)),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        onPressed: () =>
+                            Navigator.of(context, rootNavigator: true).pop(),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Color(0xFFFFB3CC)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          padding: const EdgeInsets.symmetric(vertical: 13),
+                        ),
+                        child: Text(
+                          'Lo pensaré',
+                          style: TextStyle(
+                              color: const Color(0xFFB02050).withValues(alpha: 0.7),
+                              fontSize: 13),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () =>
+                            Navigator.of(context, rootNavigator: true).pop(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFB02050),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          padding: const EdgeInsets.symmetric(vertical: 13),
+                          elevation: 0,
+                        ),
+                        child: const Text(
+                          'Con gusto 💚',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
