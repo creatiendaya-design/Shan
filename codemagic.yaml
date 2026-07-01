@@ -11,8 +11,6 @@ workflows:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.creatiendaya.shannon
-        certificate: Shannon Distribution
-        provisioning_profile: Shannon_AppStore
     scripts:
       - name: Instalar dependencias
         script: |
