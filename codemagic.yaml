@@ -16,8 +16,12 @@ workflows:
         script: |
           flutter pub get
           cd ios && pod install && cd ..
+      - name: Configurar firma de código
+        script: xcode-project use-profiles
       - name: Construir y firmar
-        script: flutter build ipa --release
+        script: |
+          flutter build ipa --release \
+            --export-options-plist=/Users/builder/export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa
     publishing:
