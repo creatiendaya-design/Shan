@@ -8,6 +8,8 @@ workflows:
       flutter: stable
       xcode: 16.3
       cocoapods: default
+      groups:
+        - default
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.creatiendaya.shannon
@@ -24,12 +26,10 @@ workflows:
             --export-options-plist=/Users/builder/export_options.plist
       - name: Subir a TestFlight
         script: |
-          echo "$APP_STORE_CONNECT_PRIVATE_KEY" > /tmp/private_key.p8
-          app-store-connect publish \
-            --path "$(find build/ios/ipa -name '*.ipa')" \
-            --key-id "$APP_STORE_CONNECT_KEY_IDENTIFIER" \
-            --issuer-id "$APP_STORE_CONNECT_ISSUER_ID" \
-            --private-key @file:/tmp/private_key.p8 \
-            --testflight
+          xcrun altool --upload-app \
+            --type ios \
+            --file "$(find build/ios/ipa -name '*.ipa')" \
+            --username "creatiendaya@gmail.com" \
+            --password "$APP_SPECIFIC_PASSWORD"
     artifacts:
       - build/ios/ipa/*.ipa
