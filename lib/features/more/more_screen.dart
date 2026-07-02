@@ -358,7 +358,7 @@ class _LetterDialog extends StatelessWidget {
                 Container(height: 1, color: const Color(0xFFFFD6A5)),
                 const SizedBox(height: 20),
                 Text(
-                  'Sé que apenas nos estamos conociendo,\ny precisamente por eso hice esto para ti.\n\nMe gustaría tenerte más cerca...\n¿Me darías el gusto de invitarte a salir?',
+                  'Sé que apenas nos estamos conociendo,\ny precisamente por eso hice esto para ti.\n\nMe gustaría conocerte mejor...\n¿Me darías el gusto de invitarte a salir?',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.lato(
                     fontSize: 15.5,
